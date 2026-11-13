@@ -12,18 +12,20 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 async function submitForm(form) {
   try {
     /*
-     * Create a farmOS observation log documenting the activity observation.
+     * Create a `ZUCCHINI` plant asset as an example.
+     * This will need to be modified to create the actual
+     * assets, quantities and logs needed for the entry point.
      */
-    return await farmosUtil.createObservationLog(
+    return await farmosUtil.createPlantAsset(
       form.date,
-      form.type,
+      'ZUCCHINI',
       form.comment
     );
   } catch (error) {
     console.error('activity_observation lib.js:');
     console.error(error);
 
-    let errorMsg = 'Error creating activity_observation record.';
+    let errorMsg = 'Error creating Activity Observation records.';
     throw Error(errorMsg, error);
   }
 }

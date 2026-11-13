@@ -5,6 +5,12 @@
     the same and should be prefixed with the name of the entry point.
     Use the examples below as a guide when adding your own elements.
   -->
+  <SelectorBase
+    id="activity-observation-type"
+    data-cy="activity-observation-type"
+    v-bind:options="activityTypeOptions"
+    v-model:selected="form.activityType"
+  />
   <div
     id="activity-observation"
     data-cy="activity-observation"
@@ -75,23 +81,15 @@
           v-on:ready="createdCount++"
         />
 
-        <!-- Activity Type -->
-        <SelectorBase
-          id="activity-observation-type"
-          data-cy="activity-observation-type"
-          required
-          label="Type"
-          invalidFeedbackText="An activity type is required."
-          v-bind:options="activityTypes"
-          v-model:selected="form.type"
-          v-bind:showValidityStyling="validity.show"
-          v-on:valid="
-            (valid) => {
-              validity.type = valid;
-            }
-          "
-          v-on:ready="createdCount++"
-        />
+        <!-- 
+          Add additional form elements here.
+        
+          See the FarmData2 documentation for links to the documentation
+          for the custom FarmData2 Vue Components.
+
+          See the BootstrapVueNext documentation for links to the 
+          documentation for its Vue Components.
+        -->
 
         <hr />
         <!-- Comment Box -->
@@ -142,22 +140,19 @@
   import DateSelector from '@comps/DateSelector/DateSelector.vue';
   import CommentBox from '@comps/CommentBox/CommentBox.vue';
   import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
-  import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
   import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-  import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
+  import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
   import { lib } from './lib.js';
 
   export default {
     components: {
       DateSelector,
-      SelectorBase,
       CommentBox,
       SubmitResetButtons,
+      SelectorBase,
     },
     data() {
       return {
-        activityTypes: [],
-
         /*
          * The `data.form` object is used to hold all of the data that is
          * collected from the form. This data is stored in a single
@@ -170,7 +165,6 @@
          */
         form: {
           date: dayjs().format('YYYY-MM-DD'),
-          type: null,
           comment: null,
         },
         /*
@@ -195,7 +189,6 @@
          */
         validity: {
           show: false,
-          type: false,
           date: false,
           comment: false,
         },
@@ -225,6 +218,8 @@
          * property below for more information.
          */
         createdCount: 0,
+
+        activityTypeOptions: ['Seeding', 'Transplanting', 'Tillage'],
       };
     },
     computed: {
@@ -253,7 +248,7 @@
        * when all of the components are fully ready.
        */
       pageDoneLoading() {
-        return this.createdCount == 5;
+        return this.createdCount == 4;
       },
       /*
        * The Submit button will be enabled when this property is true.
@@ -348,6 +343,7 @@
             if (!this.errorShown) {
               uiUtil.hideToast();
               this.errorShowing = true;
+
               await uiUtil.showToast(
                 'Error creating Activity Observation records.',
                 'Check your network connection and try again.',
@@ -391,7 +387,6 @@
         if (!sticky) {
           /* Reset is not sticky, so also reset the sticky values. */
           this.form.date = dayjs().format('YYYY-MM-DD');
-          this.form.type = null;
         }
 
         /* Always reset the non-sticky values. */
@@ -408,12 +403,7 @@
      * by the individual Vue Components used in the page and this hook
      * will simply increment `this.createdCount`.
      */
-    async created() {
-      let logCategoryObjects = await farmosUtil.getLogCategories();
-      this.activityTypes = logCategoryObjects.map(
-        (category) => category.attributes.name
-      );
-
+    created() {
       this.createdCount++;
 
       if (window.Cypress) {
