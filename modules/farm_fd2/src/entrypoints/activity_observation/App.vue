@@ -74,24 +74,29 @@
           "
           v-on:ready="createdCount++"
         />
-
         <!-- Activity Type -->
         <SelectorBase
           id="activity-observation-type"
           data-cy="activity-observation-type"
+          label="Activity Type"
+          invalidFeedbackText="Please select an activity type."
           required
-          label="Type"
-          invalidFeedbackText="An activity type is required."
-          v-bind:options="activityTypes"
-          v-model:selected="form.type"
+          v-bind:options="['Seeding', 'Transplanting', 'Tillage']"
           v-bind:showValidityStyling="validity.show"
-          v-on:valid="
-            (valid) => {
-              validity.type = valid;
-            }
-          "
+          v-model:selected="form.activityType"
+          v-on:valid="validity.activityType = $event"
           v-on:ready="createdCount++"
         />
+
+        <!-- 
+          Add additional form elements here.
+        
+          See the FarmData2 documentation for links to the documentation
+          for the custom FarmData2 Vue Components.
+
+          See the BootstrapVueNext documentation for links to the 
+          documentation for its Vue Components.
+        -->
 
         <hr />
         <!-- Comment Box -->
@@ -139,25 +144,22 @@
 
 <script>
   import dayjs from 'dayjs';
+  import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
   import DateSelector from '@comps/DateSelector/DateSelector.vue';
   import CommentBox from '@comps/CommentBox/CommentBox.vue';
   import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
-  import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
   import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-  import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
   import { lib } from './lib.js';
 
   export default {
     components: {
       DateSelector,
-      SelectorBase,
       CommentBox,
       SubmitResetButtons,
+      SelectorBase,
     },
     data() {
       return {
-        activityTypes: [],
-
         /*
          * The `data.form` object is used to hold all of the data that is
          * collected from the form. This data is stored in a single
@@ -170,7 +172,7 @@
          */
         form: {
           date: dayjs().format('YYYY-MM-DD'),
-          type: null,
+          activityType: '',
           comment: null,
         },
         /*
@@ -195,8 +197,8 @@
          */
         validity: {
           show: false,
-          type: false,
           date: false,
+          activityType: false,
           comment: false,
         },
 
@@ -348,6 +350,7 @@
             if (!this.errorShown) {
               uiUtil.hideToast();
               this.errorShowing = true;
+
               await uiUtil.showToast(
                 'Error creating Activity Observation records.',
                 'Check your network connection and try again.',
@@ -391,10 +394,10 @@
         if (!sticky) {
           /* Reset is not sticky, so also reset the sticky values. */
           this.form.date = dayjs().format('YYYY-MM-DD');
-          this.form.type = null;
         }
 
         /* Always reset the non-sticky values. */
+        this.form.activityType = '';
         this.form.comment = '';
       },
     },
@@ -408,12 +411,7 @@
      * by the individual Vue Components used in the page and this hook
      * will simply increment `this.createdCount`.
      */
-    async created() {
-      let logCategoryObjects = await farmosUtil.getLogCategories();
-      this.activityTypes = logCategoryObjects.map(
-        (category) => category.attributes.name
-      );
-
+    created() {
       this.createdCount++;
 
       if (window.Cypress) {

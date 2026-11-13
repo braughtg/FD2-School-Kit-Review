@@ -16,12 +16,14 @@ describe('Activity Observation: Submission tests', () => {
   function submitForm() {
     cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="date-input"]').type('1950-01-02');
-    cy.get('[data-cy="selector-input"]').select('seeding');
 
     /*
      * TODO: Add code to fill in values for other fields as they
      *       are added to the input form.
      */
+    cy.get('[data-cy="activity-observation-type"]')
+      .find('[data-cy="selector-input"]')
+      .select('Seeding');
 
     cy.get('[data-cy="comment-input"]').type('test comment');
     cy.get('[data-cy="comment-input"]').blur();
@@ -78,17 +80,16 @@ describe('Activity Observation: Submission tests', () => {
 
       let formData = spy.getCall(0).args[0];
       expect(formData.date).to.equal('1950-01-02');
-      expect(formData.type).to.equal('seeding');
       /*
        * TODO: Add checks for the other parts of the formData
        *       as they are added to the input form.
        */
+      expect(formData.activityType).to.equal('Seeding');
       expect(formData.comment).to.equal('test comment');
     });
 
     // Check that the "sticky" parts of the form are not reset...
     cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');
-    cy.get('[data-cy="selector-input"]').should('have.value', 'seeding');
 
     // Check that the other parts of the form are reset.
     cy.get('[data-cy="comment-input"]').should('have.value', '');

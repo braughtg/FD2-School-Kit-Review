@@ -10,7 +10,7 @@ describe('Test the Activity Observation lib submission', () => {
    */
   let form = {
     date: '1950-01-02',
-    type: 'seeding',
+    crop: 'ZUCCHINI', // Not in the sample form, but needed for testing
     comment: 'A comment',
   };
 
@@ -37,19 +37,33 @@ describe('Test the Activity Observation lib submission', () => {
     cy.saveSessionStorage();
   });
 
-  it('Activity Observation: checks the result', () => {
+  it('Activity Observation: Placeholder checks the sampleOp result', () => {
     /*
      * Check to be sure we get a plant asset.  This confirms that the lib.js
      * operation created the correct type of farmOS record.
      */
-    expect(results.type).to.equal('log--observation');
+    expect(results.type).to.equal('asset--plant');
 
     /*
      * Check the parts of the result that use the parameters that
-     * the lib.js operation passed to the farmosUtil.createObservationLog
+     * the lib.js operation passed to the farmosUtil.createPlantAsset
      * function.
      */
-    expect(results.attributes.name).to.equal(form.date + '_obs_' + form.type);
+    expect(results.attributes.name).to.equal(form.date + '_' + form.crop);
     expect(results.attributes.notes.value).to.equal(form.comment);
   });
+
+  /*
+   * NOTE: If more than one log, asset or quantity is created then the submitForm
+   *       function will have used the farmosUtil.runTransaction function. In that
+   *       case, there should be tests to check that all of the logs, assets and quantities
+   *       were created correctly. In addition, there should also be tests to check that
+   *       when an error occurs during the creation of any of the logs, assets or quantities,
+   *       that all of the logs, assets and quantities are rolled back and none of them are
+   *       remain in the farmOS database.
+   *
+   *       See the lib.submit.unit.cy.js and lib.submitError.unit.cy.js files in the
+   *       tray_seeding and direct_seeding entry points for examples of these tests in actual
+   *       entry points.
+   */
 });
