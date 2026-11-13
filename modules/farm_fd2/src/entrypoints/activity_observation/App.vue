@@ -75,13 +75,11 @@
           v-on:ready="createdCount++"
         />
 
-        <!-- Activity Type -->
         <SelectorBase
           id="activity-observation-type"
           data-cy="activity-observation-type"
+          label="Type:"
           required
-          label="Type"
-          invalidFeedbackText="An activity type is required."
           v-bind:options="activityTypes"
           v-model:selected="form.type"
           v-bind:showValidityStyling="validity.show"
@@ -146,6 +144,7 @@
   import * as uiUtil from '@libs/uiUtil/uiUtil.js';
   import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
   import { lib } from './lib.js';
+  import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
   export default {
     components: {
@@ -410,9 +409,12 @@
      */
     async created() {
       let logCategoryObjects = await farmosUtil.getLogCategories();
-      this.activityTypes = logCategoryObjects.map(
+      console.log('logCategoryObjects:', logCategoryObjects);
+
+      let logCategories = logCategoryObjects.map(
         (category) => category.attributes.name
       );
+      console.log('logCategories:', logCategories);
 
       this.createdCount++;
 
@@ -451,4 +453,4 @@
   #activity-observation-comment {
     margin-bottom: 15px;
   }
-</style>
+</style>;         
