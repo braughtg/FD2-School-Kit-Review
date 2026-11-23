@@ -2,7 +2,7 @@
 
 - At the start of every review, review the current workspace state from scratch. Do not reuse conclusions from an earlier review, regardless of branch changes.
 - The prompt will identify the criteria to be used for the review. Find the file in the `.github/criteria` directory corresponding to the criteria indicated in the prompt. Read the criteria to be used for the review from that file. This is the only criteria to be used for the review. Do not use any other criteria or information.
-- Review only files inside `modules/farm_fd2/src/entrypoints/activity_observation/`.
+- Review only files inside the `modules/farm_fd2/src/entrypoints/activity_observation/` or `components/ActivityTypeSelector` directories.
 - Do not edit files or make commits while reviewing.
 - Ignore typos and minor naming differences when deciding whether a criterion is met, unless they prevent the described behavior from working.
 - Each level-two heading in the criteria file defines a "Section"
